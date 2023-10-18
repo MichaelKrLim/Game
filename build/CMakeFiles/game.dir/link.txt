@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/game.dir/main.cpp.o -o game  libraylib.a -lm -latomic -lpthread /usr/lib/x86_64-linux-gnu/libOpenGL.so /usr/lib/x86_64-linux-gnu/libGLX.so libglfw3.a /usr/lib/x86_64-linux-gnu/librt.a -lm -ldl 
