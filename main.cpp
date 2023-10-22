@@ -1,18 +1,21 @@
+#include "Tile_set.hpp"
+
 #include <raylib.h>
+#include <filesystem>
 
 int main()
 {
 	InitWindow(1920, 1080, "Game");
 	SetExitKey(KEY_SPACE); 
-	Texture	texture =  LoadTexture("assets/tileset.png"); 
+	Tile_set terrain("assets/tileset.png", 32);
+	Tile_set trees("assets/tileset.png", 32);
 	while(!WindowShouldClose())
 	{
 		BeginDrawing();
 		// rendering 
 		ClearBackground(WHITE);
-		DrawTextureRec(texture, Rectangle(100,100,100,100), Vector2(0,0), WHITE); 
+		terrain.draw(1586, {0,0});
 		//
 		EndDrawing();
 	}
-	UnloadTexture(texture); 
 }

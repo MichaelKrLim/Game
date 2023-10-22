@@ -22,6 +22,6 @@ FetchContent_Declare(raylib
 )
 FetchContent_MakeAvailable(raylib)
 
-add_executable(game main.cpp)
+add_executable(game main.cpp Tile_set.cpp Tile_set.hpp)
 target_link_libraries(game PRIVATE raylib)
 set_property(TARGET game PROPERTY CXX_STANDARD 20)
