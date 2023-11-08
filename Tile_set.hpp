@@ -14,11 +14,12 @@ class Tile_set
 	// operators
 	Tile_set& operator=(const Tile_set&) = delete;	
 	// public functions
+	int tile_size() const;
 	void draw(unsigned tile_index, Vector2 position) const;
 	
 	private:
-	Texture texture;
-	int tile_size;
+	Texture texture_;
+	int tile_size_;
 };
 
 #endif
