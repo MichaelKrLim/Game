@@ -1,5 +1,7 @@
-#include "Tile_set.hpp"
 #include "Map.hpp"
+#include "Tile_set.hpp"
+
+#include "rl/Texture.hpp"
 
 #include <raylib.h>
 
@@ -8,9 +10,26 @@
 #include <iostream>
 #include <vector>
 
+class Player
+{
+
+	public:
+
+	void render() const;
+		
+	private:
+
+	rl::Texture texture_{"assets/player.png"};
+
+	const int frames_per_row = 8;
+	const int num_rows = 2;
+	const int frames_per_animation = 4;
+};
+
 int main()
 {
 	InitWindow(1280, 720, "Game");
+	Player player;
 	RenderTexture image = LoadRenderTexture(1280*2, 720*2);
 	SetExitKey(KEY_SPACE); 
 	Tile_set terrain("assets/tileset.png", 32);
