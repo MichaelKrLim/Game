@@ -27,6 +27,7 @@ add_executable(
 	main.cpp
 	Layer.cpp Layer.hpp 
 	Tile_set.cpp Tile_set.hpp
+	Map.cpp Map.hpp
 )
 target_link_libraries(game PRIVATE raylib)
 set_property(TARGET game PROPERTY CXX_STANDARD 20)
