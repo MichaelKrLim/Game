@@ -6,7 +6,7 @@
 #include <concepts>
 
 template <typename T>
-inline Vector2 operator*(Vector2 lhs, T rhs) requires std::integral<T> || std::floating_point<T>
+Vector2 operator*(Vector2 lhs, T rhs) requires std::integral<T> || std::floating_point<T>
 {
 	return Vector2(lhs.x*rhs, lhs.y*rhs);
 }
@@ -22,7 +22,7 @@ inline Vector2 operator+(Vector2 lhs, Vector2 rhs)
 }
 
 template <typename T>
-inline Vector2 operator/(Vector2 lhs, T rhs) requires std::integral<T> || std::floating_point<T>
+Vector2 operator/(Vector2 lhs, T rhs) requires std::integral<T> || std::floating_point<T>
 {
 	return Vector2(lhs.x/rhs, lhs.y/rhs);
 }
