@@ -19,6 +19,7 @@ class Player
 
 	Vector2 update(std::chrono::nanoseconds del_time);
 	void render(Vector2 position);
+	Vector2 render_size() const;
 
 	private:
 

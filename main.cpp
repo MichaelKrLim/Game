@@ -3,6 +3,7 @@
 #include "Sprite.hpp"
 #include "Tile_set.hpp"
 
+#include "rl/operator_overloads.hpp"
 #include "rl/Texture.hpp"
 
 #include <raylib.h>
@@ -14,6 +15,13 @@
 #include <vector>
 #include <cmath>
 
+bool sprite_can_move_to(const Map& map, const Tile_set& tile_set, const Vector2& position, const Vector2& sprite_size)
+{
+	return (map.is_reachable(position, tile_set) &&
+			map.is_reachable(position+Vector2{sprite_size.x,0}, tile_set) &&
+			map.is_reachable(position+sprite_size, tile_set) &&
+			map.is_reachable(position+Vector2{0,sprite_size.y}, tile_set));
+}
 
 int main()
 {
@@ -23,7 +31,7 @@ int main()
 	SetTargetFPS(240);
 	
 	Tile_set terrain("assets/tileset.png", 32);
-	Map base_map({"assets/texture_layers/first_terrain.csv", "assets/texture_layers/second_trees.csv"}, "assets/collision map.csv");
+	Map map({"assets/texture_layers/first_terrain.csv", "assets/texture_layers/second_trees.csv"}, "assets/collision map.csv");
 	Player player;
 	Vector2 player_position{80, 80};
 	RenderTexture image = LoadRenderTexture(GetRenderWidth()*2, GetRenderHeight()*2);
@@ -37,7 +45,7 @@ int main()
 		BeginTextureMode(image);
 		// rendering 
 		ClearBackground(WHITE);
-		base_map.render(terrain, {0, 0});
+		map.render(terrain, {0, 0});
 		player.render(player_position);
 		//
 		EndTextureMode();
@@ -49,8 +57,8 @@ int main()
 		if(!space_pressed)
 		{
 			auto del_position = player.update(end_time-begin_time);
-			Vector2 new_unvalidated_position = {player_position.x+del_position.x, player_position.y + del_position.y};
-			if(base_map.is_reachable(new_unvalidated_position, terrain))
+			Vector2 new_unvalidated_position = player_position+del_position;
+			if(sprite_can_move_to(map, terrain, new_unvalidated_position, player.render_size()))
 			{
 				player_position = new_unvalidated_position;
 			}

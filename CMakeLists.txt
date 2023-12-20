@@ -38,6 +38,7 @@ add_executable(
 	Player.cpp Player.hpp
 
 	rl/Texture.cpp rl/Texture.hpp
+	rl/operator_overloads.hpp
 )
 
 #linking & sets cpp standered

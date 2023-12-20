@@ -5,6 +5,36 @@
   "file": "/home/michael/projects/game/main.cpp"
 },
 {
+  "directory": "/home/michael/projects/game/build",
+  "command": "/usr/bin/c++ -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/home/michael/projects/game/build/_deps/raylib-src/src -I/home/michael/projects/game/build/_deps/raylib-src/src/external/glfw/include -std=gnu++20 -o CMakeFiles/game.dir/Layer.cpp.o -c /home/michael/projects/game/Layer.cpp",
+  "file": "/home/michael/projects/game/Layer.cpp"
+},
+{
+  "directory": "/home/michael/projects/game/build",
+  "command": "/usr/bin/c++ -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/home/michael/projects/game/build/_deps/raylib-src/src -I/home/michael/projects/game/build/_deps/raylib-src/src/external/glfw/include -std=gnu++20 -o CMakeFiles/game.dir/Tile_set.cpp.o -c /home/michael/projects/game/Tile_set.cpp",
+  "file": "/home/michael/projects/game/Tile_set.cpp"
+},
+{
+  "directory": "/home/michael/projects/game/build",
+  "command": "/usr/bin/c++ -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/home/michael/projects/game/build/_deps/raylib-src/src -I/home/michael/projects/game/build/_deps/raylib-src/src/external/glfw/include -std=gnu++20 -o CMakeFiles/game.dir/Map.cpp.o -c /home/michael/projects/game/Map.cpp",
+  "file": "/home/michael/projects/game/Map.cpp"
+},
+{
+  "directory": "/home/michael/projects/game/build",
+  "command": "/usr/bin/c++ -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/home/michael/projects/game/build/_deps/raylib-src/src -I/home/michael/projects/game/build/_deps/raylib-src/src/external/glfw/include -std=gnu++20 -o CMakeFiles/game.dir/Sprite.cpp.o -c /home/michael/projects/game/Sprite.cpp",
+  "file": "/home/michael/projects/game/Sprite.cpp"
+},
+{
+  "directory": "/home/michael/projects/game/build",
+  "command": "/usr/bin/c++ -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/home/michael/projects/game/build/_deps/raylib-src/src -I/home/michael/projects/game/build/_deps/raylib-src/src/external/glfw/include -std=gnu++20 -o CMakeFiles/game.dir/Player.cpp.o -c /home/michael/projects/game/Player.cpp",
+  "file": "/home/michael/projects/game/Player.cpp"
+},
+{
+  "directory": "/home/michael/projects/game/build",
+  "command": "/usr/bin/c++ -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/home/michael/projects/game/build/_deps/raylib-src/src -I/home/michael/projects/game/build/_deps/raylib-src/src/external/glfw/include -std=gnu++20 -o CMakeFiles/game.dir/rl/Texture.cpp.o -c /home/michael/projects/game/rl/Texture.cpp",
+  "file": "/home/michael/projects/game/rl/Texture.cpp"
+},
+{
   "directory": "/home/michael/projects/game/build/_deps/raylib-build/raylib",
   "command": "/usr/bin/cc -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/home/michael/projects/game/build/_deps/raylib-src/src -isystem /home/michael/projects/game/build/_deps/raylib-src/src/external/glfw/include -fno-strict-aliasing -Werror=implicit-function-declaration -Werror=pointer-arith  -std=gnu99 -o CMakeFiles/raylib.dir/rcore.c.o -c /home/michael/projects/game/build/_deps/raylib-src/src/rcore.c",
   "file": "/home/michael/projects/game/build/_deps/raylib-src/src/rcore.c"

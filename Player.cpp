@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "rl/operator_overloads.hpp"
+
 Vector2 Player::handle_movement(std::chrono::nanoseconds del_time)
 {
 	Vector2 movement_direction{0, 0};
@@ -36,8 +38,8 @@ Vector2 Player::handle_movement(std::chrono::nanoseconds del_time)
 		return {0,0};
 	}
 
-	const Vector2 normalised_direction{movement_direction.x/length, movement_direction.y/length};
-	const Vector2 velocity(normalised_direction.x*distance, normalised_direction.y*distance);
+	const Vector2 normalised_direction = movement_direction/length;
+	const Vector2 velocity = normalised_direction*distance;
 	return velocity;
 }
 
@@ -53,3 +55,7 @@ void Player::render(Vector2 position)
 	sprite_.render(current_animation_, position);
 }
 
+Vector2 Player::render_size() const
+{
+	return sprite_.frame_size();
+}

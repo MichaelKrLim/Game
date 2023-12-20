@@ -24,3 +24,8 @@ void Sprite::reset_animation()
 	frame_number_ = 0;
 	del_time_elapsed_ = std::chrono::nanoseconds{0};
 }
+
+Vector2 Sprite::frame_size() const
+{
+	return Vector2(frame_width_, frame_height_);
+}

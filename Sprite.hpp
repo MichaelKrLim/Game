@@ -26,7 +26,8 @@ class Sprite
 	void render(int animation_number, Vector2 position) const;
 	void update(std::chrono::nanoseconds del_time);
 	void reset_animation();
-	
+	Vector2 frame_size() const;
+
 	private:
 
 	rl::Texture texture_;
