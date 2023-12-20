@@ -11,10 +11,13 @@
 class Layer
 {
 	public:
+		
 	Layer(const std::filesystem::path&);
 	void render(const Tile_set&, const Vector2&);
+	int tile_id_at(int x, int y) const;
 	
 	private:
+
 	int row_num_{0};
 	std::vector<int> map_;
 };

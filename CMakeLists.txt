@@ -34,7 +34,9 @@ add_executable(
 	Layer.cpp Layer.hpp 
 	Tile_set.cpp Tile_set.hpp
 	Map.cpp Map.hpp
-	
+	Sprite.cpp Sprite.hpp
+	Player.cpp Player.hpp
+
 	rl/Texture.cpp rl/Texture.hpp
 )
 

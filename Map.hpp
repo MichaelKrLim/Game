@@ -12,11 +12,16 @@
 class Map
 {
 	public:
-		void render(const Tile_set& tile_set, Vector2 position);
-		Map(std::initializer_list<std::filesystem::path> layer_paths);
-	
+
+	Map(std::initializer_list<std::filesystem::path> layer_paths, std::filesystem::path collision_layer);
+
+	void render(const Tile_set& tile_set, Vector2 position);
+	bool is_reachable(Vector2 position, const Tile_set& tile_set) const;
+		
 	private:
+
 	std::vector<Layer> layers{};
+	Layer collision_layer_;
 };
 
 #endif // Map_hpp_INCLUDED

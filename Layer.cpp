@@ -42,3 +42,9 @@ void Layer::render(const Tile_set& tile_set,const Vector2& origin)
 	}
 }
 
+int Layer::tile_id_at(int x, int y) const
+{
+	const int column_num = map_.size()/row_num_;
+	const int index = y*column_num+x;
+	return map_[index];
+}

@@ -1,4 +1,6 @@
 #include "Map.hpp"
+#include "Player.hpp"
+#include "Sprite.hpp"
 #include "Tile_set.hpp"
 
 #include "rl/Texture.hpp"
@@ -10,46 +12,8 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <cmath>
 
-class Player
-{
-	public:
-
-	void render(int animation_number) const;
-	void update(std::chrono::nanoseconds del_time);
-	
-	private:
-
-	rl::Texture texture_ {"assets/player.png"};
-
-	const int frames_per_row_ = 8;
-	const int num_rows_ = 2;
-	const int frames_per_animation_ = 4;
-	const int frame_width_ = texture_.width()/frames_per_row_;
-	const int frame_height_ = texture_.height()/num_rows_;
-
-	int frame_number_{0};
-	std::chrono::nanoseconds del_time_elapsed_{0}; 
-};
-
-void Player::update(std::chrono::nanoseconds del_time)
-{
-	del_time_elapsed_ += del_time;
-	while(del_time_elapsed_ >= std::chrono::seconds{1})
-	{
-		++frame_number_;
-		del_time_elapsed_ -= std::chrono::seconds{1};
-	}
-	frame_number_%=frames_per_animation_;
-}
-
-void Player::render(int animation_number) const
-{
-	const int image_number = frame_number_+animation_number*frames_per_animation_;
-	const Rectangle frame(image_number*frame_width_, (image_number/frames_per_row_)*frame_height_, frame_width_, frame_height_);
-	DrawTexturePro(texture_, frame, Rectangle(50, 50, frame_width_*3, frame_height_*3), {0, 0}, 0, WHITE);
-	auto end_time = std::chrono::steady_clock::now();
-}
 
 int main()
 {
@@ -57,11 +21,13 @@ int main()
 	
 	InitWindow(1280, 720, "Game");
 	SetTargetFPS(240);
-	Player player;
-	RenderTexture image = LoadRenderTexture(1280*2, 720*2);
-	SetExitKey(KEY_SPACE); 
+	
 	Tile_set terrain("assets/tileset.png", 32);
-	Map base_map({"assets/first_terrain.csv", "assets/second_trees.csv"});
+	Map base_map({"assets/texture_layers/first_terrain.csv", "assets/texture_layers/second_trees.csv"}, "assets/collision map.csv");
+	Player player;
+	Vector2 player_position{80, 80};
+	RenderTexture image = LoadRenderTexture(GetRenderWidth()*2, GetRenderHeight()*2);
+	SetExitKey(KEY_SPACE); 
 	auto del_time_elapsed = 0ns;
 	while(!WindowShouldClose())
 	{
@@ -72,7 +38,7 @@ int main()
 		// rendering 
 		ClearBackground(WHITE);
 		base_map.render(terrain, {0, 0});
-		player.render(0);
+		player.render(player_position);
 		//
 		EndTextureMode();
 		BeginDrawing();
@@ -82,7 +48,12 @@ int main()
 		auto end_time = std::chrono::steady_clock::now();
 		if(!space_pressed)
 		{
-			player.update(end_time-begin_time);
+			auto del_position = player.update(end_time-begin_time);
+			Vector2 new_unvalidated_position = {player_position.x+del_position.x, player_position.y + del_position.y};
+			if(base_map.is_reachable(new_unvalidated_position, terrain))
+			{
+				player_position = new_unvalidated_position;
+			}
 		}
 	}
 	UnloadRenderTexture(image);

@@ -16,6 +16,7 @@ class Tile_set
 	void draw(unsigned tile_index, Vector2 position) const;
 	
 	private:
+		
 	rl::Texture texture_;
 	int tile_size_;
 };
