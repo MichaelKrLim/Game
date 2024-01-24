@@ -48,3 +48,8 @@ int Layer::tile_id_at(int x, int y) const
 	const int index = y*column_num+x;
 	return map_[index];
 }
+
+Vector2 Layer::size() const
+{
+	return Vector2(map_.size()/row_num_,row_num_);
+}

@@ -36,9 +36,11 @@ add_executable(
 	Map.cpp Map.hpp
 	Sprite.cpp Sprite.hpp
 	Player.cpp Player.hpp
+	Enemy.cpp Enemy.hpp
 
 	rl/Texture.cpp rl/Texture.hpp
 	rl/operator_overloads.hpp
+	rl/maths.hpp
 )
 
 #linking & sets cpp standered

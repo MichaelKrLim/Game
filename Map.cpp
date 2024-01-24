@@ -27,3 +27,8 @@ bool Map::is_reachable(Vector2 position, const Tile_set& tile_set) const
 	}
 	return false;
 }
+
+Vector2 Map::size() const
+{
+	return collision_layer_.size();
+}

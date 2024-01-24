@@ -17,7 +17,8 @@ class Map
 
 	void render(const Tile_set& tile_set, Vector2 position);
 	bool is_reachable(Vector2 position, const Tile_set& tile_set) const;
-		
+	Vector2 size() const;
+
 	private:
 
 	std::vector<Layer> layers{};

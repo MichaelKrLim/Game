@@ -15,7 +15,8 @@ class Layer
 	Layer(const std::filesystem::path&);
 	void render(const Tile_set&, const Vector2&);
 	int tile_id_at(int x, int y) const;
-	
+	Vector2 size() const;
+
 	private:
 
 	int row_num_{0};

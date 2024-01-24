@@ -25,7 +25,7 @@ class Player
 
 	Sprite sprite_;
 	int current_animation_{0};
-	int pixels_per_second_{200};
+	int pixels_per_second_{1000};
 	bool is_moving_{false};
 
 	Vector2 handle_movement(std::chrono::nanoseconds);
