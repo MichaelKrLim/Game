@@ -39,4 +39,9 @@ Vector2 operator/(Vector2 lhs, T rhs) requires std::integral<T> || std::floating
 	return Vector2(lhs.x/rhs, lhs.y/rhs);
 }
 
+inline bool operator==(Vector2 lhs, Vector2 rhs)
+{
+	return lhs.x==rhs.x && lhs.y==rhs.y;
+}
+
 #endif // rl/operator_overloads_hpp_INCLUDED

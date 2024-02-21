@@ -43,7 +43,7 @@ Vector2 Player::handle_movement(std::chrono::nanoseconds del_time)
 	return velocity;
 }
 
-Vector2 Player::update(std::chrono::nanoseconds del_time)
+Vector2 Player::update(std::chrono::nanoseconds del_time, Game& game)
 {
 	if(is_moving_)
 		sprite_.update(del_time);

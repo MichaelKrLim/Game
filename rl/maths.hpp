@@ -17,5 +17,10 @@ inline Vector2 normalise(Vector2 vector)
 	return vector/magnitude(vector);
 }
 
+inline float distance(Vector2 first, Vector2 second)
+{
+	return magnitude(first-second);
+}
+
 #endif // rl/maths_hpp_INCLUDED
 

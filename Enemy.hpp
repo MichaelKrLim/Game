@@ -1,13 +1,14 @@
 #ifndef Enemy_hpp_INCLUDED
 #define Enemy_hpp_INCLUDED
 
+#include "Entity.hpp"
 #include "Sprite.hpp"
 
 #include <raylib.h>
 
 #include <chrono>
 
-class Enemy
+class Enemy : public Entity
 {
 	public:
 
@@ -17,9 +18,9 @@ class Enemy
 
 	}
 
-	Vector2 update(std::chrono::nanoseconds del_time, Vector2 position, Vector2 map_size);
-	void render(Vector2 position);
-	Vector2 render_size() const;
+	Vector2 update(std::chrono::nanoseconds del_time, Game& game) override;
+	void render(Vector2 position) override;
+	Vector2 render_size() const override;
 
 	private:
 
@@ -29,7 +30,7 @@ class Enemy
 	bool is_moving_{false};
 	Vector2 desired_position{1000,1000};
 	
-	Vector2 select_desired_position(Vector2 map_size);
+	Vector2 select_desired_position(Vector2 map_size, Vector2 enemy_position, Vector2 player_position);
 };
 
 #endif // Enemy_hpp_INCLUDED

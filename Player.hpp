@@ -1,13 +1,14 @@
 #ifndef Player_hpp_INCLUDED
 #define Player_hpp_INCLUDED
 
+#include "Entity.hpp"
 #include "Sprite.hpp"
 
 #include <raylib.h>
 
 #include <chrono>
 
-class Player
+class Player : public Entity
 {
 	public:
 
@@ -17,9 +18,9 @@ class Player
 
 	}
 
-	Vector2 update(std::chrono::nanoseconds del_time);
-	void render(Vector2 position);
-	Vector2 render_size() const;
+	Vector2 update(std::chrono::nanoseconds del_time, Game& game) override;
+	void render(Vector2 position) override;
+	Vector2 render_size() const override;
 
 	private:
 
