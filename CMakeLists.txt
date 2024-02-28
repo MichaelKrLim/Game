@@ -38,6 +38,7 @@ add_executable(
 	Player.cpp Player.hpp
 	Enemy.cpp Enemy.hpp
 	Entity.hpp
+	Game.cpp Game.hpp
 
 	rl/Texture.cpp rl/Texture.hpp
 	rl/operator_overloads.hpp

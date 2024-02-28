@@ -11,7 +11,7 @@ class Entity
 {
 	public:
 
-	virtual Vector2 update(std::chrono::nanoseconds del_time, Game& game) = 0;
+	virtual Vector2 update(std::chrono::nanoseconds del_time, Game& game, const Vector2& position) = 0;
 	virtual void render(Vector2 position) = 0;
 	virtual Vector2 render_size() const = 0;
 };

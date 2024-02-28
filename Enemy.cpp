@@ -1,4 +1,5 @@
 #include "Enemy.hpp"
+#include "Game.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -11,7 +12,7 @@
 #include "rl/maths.hpp"
 #include "rl/operator_overloads.hpp"
 
-Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position, Vector2 player_position)
+Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position, Vector2 player_position, const Game& game)
 {
 	//A*
 	// TODO fix enumerate_neighbours creating negative positions
@@ -30,15 +31,22 @@ Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position,
 		}
 	};
 
-	auto enumerate_neighbours = [](const auto& current_waypoint) -> std::vector<Vector2>
+	auto enumerate_neighbours = [&game, this](const auto& current_waypoint) -> std::vector<Vector2>
 	{
-		return std::vector<Vector2> 
+		std::vector<Vector2> unvalidated_neighbours =
 		{
 			{current_waypoint.position.x+1, current_waypoint.position.y},
 			{current_waypoint.position.x-1, current_waypoint.position.y},
 			{current_waypoint.position.x, current_waypoint.position.y+1},
 			{current_waypoint.position.x, current_waypoint.position.y-1}
 		};
+		std::vector<Vector2> valid_neighbours{};
+		for(const auto& position : unvalidated_neighbours)
+		{
+			if(game.position_is_free(position, render_size()))
+				valid_neighbours.push_back(position);
+		}
+		return valid_neighbours;
 	};
 
 	auto enumerate_neighbouring_waypoints = [&](const auto& current_waypoint) -> std::vector<Waypoint>
@@ -54,14 +62,6 @@ Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position,
 	};
 
 	std::priority_queue<Waypoint> to_visit{};
-	auto cmp = [](const auto& lhs, const auto& rhs)
-	{
-		return lhs.x == rhs.x && lhs.y == rhs.y;
-	};
-	auto hash = [](const auto& lhs)
-	{
-		return static_cast<std::size_t>(lhs.x + lhs.y) ^ static_cast<std::size_t>(lhs.y * lhs.x);
-	};
 	std::vector<bool> visited{};
 	visited.resize(map_size.x*map_size.y, false);
 
@@ -70,7 +70,7 @@ Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position,
 	{
 		auto position_to_index = [&](const auto& position)
 		{
-			int index = (position.x*map_size.x)+position.y;
+			int index = (position.x*map_size.y)+position.y;
 			return index;
 		};
 		
@@ -79,7 +79,7 @@ Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position,
 		to_visit.pop();
 		visited[index] = true;
 
-		if(distance(current_waypoint.position, player_position) < 20)
+		if(distance(current_waypoint.position, player_position) < 50)
 		{
 			return *current_waypoint.first_step;
 		}
@@ -97,9 +97,11 @@ Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position,
 	return enemy_position;
 }
 
-Vector2 Enemy::update(std::chrono::nanoseconds del_time, Vector2 position, Vector2 map_size, Vector2 player_position)
+Vector2 Enemy::update(std::chrono::nanoseconds del_time, Game& game, const Vector2& position)
 {
-	desired_position = select_desired_position(map_size, position, player_position);
+	desired_position = select_desired_position(game.map_size(), position, game.player_position(), game);
+	if(desired_position == position)
+		return {0, 0};
 
 	constexpr std::chrono::nanoseconds second = std::chrono::seconds{1};
 	const auto travelable_distance = pixels_per_second_*static_cast<double>(del_time.count())/second.count();
@@ -107,7 +109,6 @@ Vector2 Enemy::update(std::chrono::nanoseconds del_time, Vector2 position, Vecto
 	
 	if(is_moving_)
 		sprite_.update(del_time);
-
 	return travelable_distance*normalised_vector;
 }
 

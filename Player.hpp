@@ -18,7 +18,7 @@ class Player : public Entity
 
 	}
 
-	Vector2 update(std::chrono::nanoseconds del_time, Game& game) override;
+	Vector2 update(std::chrono::nanoseconds del_time, Game& game, const Vector2&) override;
 	void render(Vector2 position) override;
 	Vector2 render_size() const override;
 

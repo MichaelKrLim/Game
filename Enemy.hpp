@@ -18,7 +18,7 @@ class Enemy : public Entity
 
 	}
 
-	Vector2 update(std::chrono::nanoseconds del_time, Game& game) override;
+	Vector2 update(std::chrono::nanoseconds del_time, Game& game, const Vector2& position) override;
 	void render(Vector2 position) override;
 	Vector2 render_size() const override;
 
@@ -30,7 +30,7 @@ class Enemy : public Entity
 	bool is_moving_{false};
 	Vector2 desired_position{1000,1000};
 	
-	Vector2 select_desired_position(Vector2 map_size, Vector2 enemy_position, Vector2 player_position);
+	Vector2 select_desired_position(Vector2 map_size, Vector2 enemy_position, Vector2 player_position, const Game& game);
 };
 
 #endif // Enemy_hpp_INCLUDED

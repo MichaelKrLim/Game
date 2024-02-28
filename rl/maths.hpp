@@ -5,6 +5,7 @@
 
 #include "raylib.h"
 
+#include <cassert>
 #include <cmath>
 
 inline float magnitude(Vector2 vector)
@@ -14,6 +15,7 @@ inline float magnitude(Vector2 vector)
 
 inline Vector2 normalise(Vector2 vector)
 {
+	assert(magnitude(vector) != 0);
 	return vector/magnitude(vector);
 }
 
@@ -23,4 +25,3 @@ inline float distance(Vector2 first, Vector2 second)
 }
 
 #endif // rl/maths_hpp_INCLUDED
-
