@@ -12,10 +12,9 @@
 #include "rl/maths.hpp"
 #include "rl/operator_overloads.hpp"
 
-Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position, Vector2 player_position, const Game& game)
+std::optional<Vector2> Enemy::select_target_tile(Vector2 enemy_position, Vector2 player_position, const Game& game)
 {
 	//A*
-	// TODO fix enumerate_neighbours creating negative positions
 	struct Waypoint
 	{
 		int distance_from_start{};
@@ -31,7 +30,8 @@ Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position,
 		}
 	};
 
-	auto enumerate_neighbours = [&game, this](const auto& current_waypoint) -> std::vector<Vector2>
+	const Vector2 map_size_in_tiles = game.map_size_in_tiles();
+	auto enumerate_neighbours = [&game, this, &map_size_in_tiles](const auto& current_waypoint) -> std::vector<Vector2>
 	{
 		std::vector<Vector2> unvalidated_neighbours =
 		{
@@ -43,7 +43,9 @@ Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position,
 		std::vector<Vector2> valid_neighbours{};
 		for(const auto& position : unvalidated_neighbours)
 		{
-			if(game.position_is_free(position, render_size()))
+			const auto map_position = position*game.tile_size_in_pixels();
+			const bool is_on_map = CheckCollisionPointRec(position, Rectangle(0, 0, map_size_in_tiles.x, map_size_in_tiles.y));
+			if(is_on_map && game.position_is_free(map_position, render_size()))
 				valid_neighbours.push_back(position);
 		}
 		return valid_neighbours;
@@ -63,14 +65,14 @@ Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position,
 
 	std::priority_queue<Waypoint> to_visit{};
 	std::vector<bool> visited{};
-	visited.resize(map_size.x*map_size.y, false);
+	visited.resize(map_size_in_tiles.x*map_size_in_tiles.y, false);
 
 	to_visit.push(Waypoint{0, enemy_position});
 	while(!to_visit.empty())
 	{
 		auto position_to_index = [&](const auto& position)
 		{
-			int index = (position.x*map_size.y)+position.y;
+			int index = (position.x*map_size_in_tiles.y)+position.y;
 			return index;
 		};
 		
@@ -79,9 +81,13 @@ Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position,
 		to_visit.pop();
 		visited[index] = true;
 
-		if(distance(current_waypoint.position, player_position) < 50)
+		const auto endpoints = {Vector2(current_waypoint.position.x, current_waypoint.position.y+1)};
+		for(const auto& endpoint : endpoints)
 		{
-			return *current_waypoint.first_step;
+			if(endpoint == player_position)
+			{
+				return *current_waypoint.first_step;
+			}
 		}
 
 		for(const auto& neighbour : enumerate_neighbouring_waypoints(current_waypoint))
@@ -94,17 +100,24 @@ Vector2 Enemy::select_desired_position(Vector2 map_size, Vector2 enemy_position,
 			}
 		}
 	}
-	return enemy_position;
+	return std::nullopt;
 }
 
 Vector2 Enemy::update(std::chrono::nanoseconds del_time, Game& game, const Vector2& position)
 {
-	desired_position = select_desired_position(game.map_size(), position, game.player_position(), game);
-	if(desired_position == position)
+	const int tile_size = game.tile_size_in_pixels();	
+	if(distance(position + Vector2(0, tile_size), game.player_position()) < tile_size)
+		return {0, 0};
+	const Vector2 map_tile_size = game.map_size_in_tiles();
+	const auto player_tile_position = Vector2(std::floor(game.player_position().x/tile_size), std::floor(game.player_position().y/tile_size));
+	const auto enemy_tile_position = Vector2(std::floor(position.x/tile_size), std::floor(position.y/tile_size));
+	const auto desired_tile = select_target_tile(enemy_tile_position, player_tile_position, game);
+	if(!desired_tile)
 		return {0, 0};
 
+	const auto desired_position = *desired_tile*tile_size;
 	constexpr std::chrono::nanoseconds second = std::chrono::seconds{1};
-	const auto travelable_distance = pixels_per_second_*static_cast<double>(del_time.count())/second.count();
+	const auto travelable_distance = std::min(magnitude(desired_position-position), pixels_per_second_*static_cast<float>(del_time.count())/second.count());
 	const Vector2 normalised_vector = normalise(desired_position-position);
 	
 	if(is_moving_)

@@ -32,13 +32,17 @@ class Game
 	bool position_is_free(const Vector2& position, const Vector2& sprite_size) const;
 	bool sprite_can_move_to_without_collision(const Vector2& destination, const Vector2& sprite_size, const Vector2& starting_position);
 	
-	Vector2 map_size() const
-	{
-		return current_map_.size()*current_tile_set_.tile_size();
-	}
 	Vector2 player_position() const
 	{
 		return entities_[player_index_].position;
+	}
+	Vector2 map_size_in_tiles() const
+	{
+		return current_map_.size();
+	}
+	int tile_size_in_pixels() const
+	{
+		return current_tile_set_.tile_size();
 	}
 };
 
