@@ -24,17 +24,20 @@ int main()
 {
 	using namespace std::chrono_literals;
 	
-	InitWindow(1280, 720, "Game");
+	InitWindow(0, 0, "Game");
 	SetTargetFPS(240);
 
 	Game game;
+	const double zoom = 1;
 	RenderTexture image = LoadRenderTexture(GetRenderWidth()*2, GetRenderHeight()*2);
 	SetExitKey(KEY_SPACE); 
 	auto del_time_elapsed = 0ns;
 	while(!WindowShouldClose())
 	{
+		if(IsKeyPressed(KEY_F11))
+			ToggleFullscreen();
+
 		auto begin_time = std::chrono::steady_clock::now();
-				
 		BeginTextureMode(image);
 		
 			game.render();
@@ -43,7 +46,7 @@ int main()
 		BeginDrawing();
 
 			const auto source_rectangle = Rectangle(0, 0, image.texture.width,-image.texture.height);
-			const auto destination_rectangle = Rectangle(0, 0, image.texture.width*0.5, image.texture.height*0.5);
+			const auto destination_rectangle = Rectangle(0, 0, image.texture.width*zoom, image.texture.height*zoom);
 			DrawTexturePro(image.texture, source_rectangle, destination_rectangle, Vector2(0,0), 0, WHITE);
 
 		EndDrawing();

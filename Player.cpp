@@ -1,4 +1,5 @@
 #include "Player.hpp"
+#include "Game.hpp"
 
 #include <cmath>
 
@@ -35,7 +36,7 @@ Vector2 Player::handle_movement(std::chrono::nanoseconds del_time)
 	{
 		is_moving_ = false;
 		sprite_.reset_animation();
-		return {0,0};
+		return {0, 0};
 	}
 
 	const Vector2 normalised_direction = movement_direction/length;
@@ -43,7 +44,7 @@ Vector2 Player::handle_movement(std::chrono::nanoseconds del_time)
 	return velocity;
 }
 
-Vector2 Player::update(std::chrono::nanoseconds del_time, Game& game, const Vector2& position)
+Vector2 Player::update(std::chrono::nanoseconds del_time, Game_view game, const Vector2& position)
 {
 	if(is_moving_)
 		sprite_.update(del_time);

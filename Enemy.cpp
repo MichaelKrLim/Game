@@ -12,7 +12,7 @@
 #include "rl/maths.hpp"
 #include "rl/operator_overloads.hpp"
 
-std::optional<Vector2> Enemy::select_target_tile(Vector2 enemy_position, Vector2 player_position, const Game& game)
+std::optional<Vector2> Enemy::select_target_tile(Vector2 enemy_position, Vector2 player_position, const Game_view game)
 {
 	//A*
 	struct Waypoint
@@ -103,7 +103,7 @@ std::optional<Vector2> Enemy::select_target_tile(Vector2 enemy_position, Vector2
 	return std::nullopt;
 }
 
-Vector2 Enemy::update(std::chrono::nanoseconds del_time, Game& game, const Vector2& position)
+Vector2 Enemy::update(std::chrono::nanoseconds del_time, Game_view game, const Vector2& position)
 {
 	const int tile_size = game.tile_size_in_pixels();	
 	if(distance(position + Vector2(0, tile_size), game.player_position()) < tile_size)

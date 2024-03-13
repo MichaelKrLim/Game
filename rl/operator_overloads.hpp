@@ -23,6 +23,11 @@ Vector2 operator*(T lhs, Vector2 rhs) requires std::integral<T> || std::floating
 	return rhs*lhs;
 }
 
+inline Vector2 operator-(Vector2 vector)
+{
+	return Vector2(-vector.x, -vector.y);
+}
+
 inline Vector2 operator-(Vector2 lhs, Vector2 rhs)
 {
 	return Vector2(lhs.x-rhs.x,lhs.y-rhs.y);
@@ -31,6 +36,11 @@ inline Vector2 operator-(Vector2 lhs, Vector2 rhs)
 inline Vector2 operator+(Vector2 lhs, Vector2 rhs)
 {
 	return Vector2(lhs.x+rhs.x,lhs.y+rhs.y);
+}
+
+inline Vector2& operator+=(Vector2& lhs, Vector2 rhs)
+{
+	return lhs=lhs+rhs;
 }
 
 template <typename T>

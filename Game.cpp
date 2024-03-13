@@ -3,9 +3,16 @@
 #include "Enemy.hpp"
 #include "Player.hpp"
 #include "rl/maths.hpp"
+#include "rl/operator_overloads.hpp"
 
 void Game::update(std::chrono::nanoseconds del_time)
 {
+	constexpr std::chrono::nanoseconds second = std::chrono::seconds{1};
+	const auto seconds_passed = static_cast<float>(del_time.count())/second.count();
+	
+	camera_position += camera_velocity;
+	const auto camera_displacement = player_position()-camera_position;
+	camera_velocity = camera_velocity*0.7+(seconds_passed/2)*camera_displacement;
 	for(auto& positioned_entity : entities_)
 	{	
 		auto del_position = positioned_entity.entity->update(del_time, *this, positioned_entity.position);
@@ -34,10 +41,11 @@ Game::Game()
 void Game::render()
 {
 	ClearBackground(WHITE);
-	current_map_.render(current_tile_set_, {0, 0});
+	auto offset = Vector2(GetScreenWidth(), GetScreenHeight())/2-camera_position;
+	current_map_.render(current_tile_set_, offset);
 	for(const auto& positioned_entity : entities_)
 	{
-		positioned_entity.entity->render(positioned_entity.position);
+		positioned_entity.entity->render(positioned_entity.position+offset);
 	}
 }
 

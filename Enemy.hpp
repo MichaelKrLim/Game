@@ -19,7 +19,7 @@ class Enemy : public Entity
 
 	}
 
-	Vector2 update(std::chrono::nanoseconds del_time, Game& game, const Vector2& position) override;
+	Vector2 update(std::chrono::nanoseconds del_time, Game_view game, const Vector2& position) override;
 	void render(Vector2 position) override;
 	Vector2 render_size() const override;
 
@@ -30,7 +30,7 @@ class Enemy : public Entity
 	int pixels_per_second_{150};
 	bool is_moving_{false};
 	
-	std::optional<Vector2> select_target_tile(Vector2 enemy_position, Vector2 player_position, const Game& game);
+	std::optional<Vector2> select_target_tile(Vector2 enemy_position, Vector2 player_position, const Game_view game);
 };
 
 #endif // Enemy_hpp_INCLUDED
