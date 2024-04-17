@@ -5,26 +5,16 @@
 Layer::Layer(const std::filesystem::path& path)
 {
 	std::ifstream map_file(path);
-	int current{};
-	char ch;
-	while(map_file.read(&ch,1))
+	for(int number{0}; map_file >> number;)
 	{
-		if(std::isdigit(ch))
-		{						
-			current*=10;
-			current+=ch-'0';
-		}
-		else if(ch == ',')
-		{
-			map_.push_back(current);
-			current=0;
-		}
-		else if(ch == '\n')
+		if(map_file.peek() != ',')
 		{
 			++row_num_;
-			map_.push_back(current);
-			current=0;
 		}
+		else
+			map_file.ignore(1);
+		
+		map_.push_back(number+1);
 	}
 }
 

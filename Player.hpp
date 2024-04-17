@@ -23,11 +23,21 @@ class Player : public Entity
 	Vector2 render_size() const override;
 
 	private:
-
+	enum class Direction
+	{
+		left, right
+	};
 	Sprite sprite_;
+	//
+	bool ISHITTINGANYTHING{false};
+	//
+	std::chrono::nanoseconds time_elapsed_since_last_attack_{0};
+	Direction facing{Direction::right};
 	int current_animation_{0};
 	int pixels_per_second_{1000};
 	bool is_moving_{false};
+	bool is_attacking_{false};
+	bool is_armed_{true};
 
 	Vector2 handle_movement(std::chrono::nanoseconds);
 };

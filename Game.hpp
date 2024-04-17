@@ -14,35 +14,49 @@ class Game_view;
 
 class Game
 {
-	
+
 	public:
 	
 	Game();
+	~Game();
 	void update(std::chrono::nanoseconds del_time);
-	void render();
 	bool sprite_can_move_to_without_collision(const Vector2& destination, const Vector2& sprite_size, const Vector2& starting_position);
+	void display();
 	
 	private:
 
+	Game& operator = (const Game&) = delete;
+	Game(const Game&) = delete;
+
 	friend class Game_view;
-	
-	Map current_map_ = Map({"assets/texture_layers/first_terrain.csv", "assets/texture_layers/second_trees.csv"}, "assets/collision map.csv");
+
+	Map current_map_ = Map({"assets/texture_layers/Tile_map_Grass.csv", "assets/texture_layers/Tile_map_L2.csv"}, "assets/Tile_map_Collison.csv");
 	Tile_set current_tile_set_ = Tile_set("assets/tileset.png", 32);
 	struct Positioned_entity
 	{
 		std::unique_ptr<Entity> entity;
 		Vector2 position;
 	};
+
+
+	RenderTexture render_texture_ = LoadRenderTexture(GetRenderWidth()*2, GetRenderHeight()*2);
+	double camera_fraction_of_resolution_bound_ = 3.0/4.0;
+	double camera_velocity_dampening_multiplier_ = 0.7;
+	double camera_velocity_multiplier_ = 0.5;	
+	double zoom_{1};
 	const int player_index_ = 0;
 	std::vector<Positioned_entity> entities_{};
-	Vector2 camera_position{0, 0};
-	Vector2 camera_velocity{0, 0};
-	
+	Vector2 camera_position_{0, 0};
+	Vector2 camera_velocity_{0, 0};
+
 	bool position_is_free(const Vector2& position, const Vector2& sprite_size) const;
 	Vector2 player_position() const
 	{
 		return entities_[player_index_].position;
 	}
+
+	void update_camera(std::chrono::nanoseconds);
+	void render();
 };
 
 class Game_view
@@ -66,6 +80,24 @@ class Game_view
 	bool position_is_free(const Vector2& position, const Vector2& sprite_size) const
 	{
 		return game_.position_is_free(position, sprite_size);
+	}
+	std::vector<std::size_t> collisions_with(Rectangle collision_box)
+	{
+		std::vector<std::size_t> colliding_entites_ids;
+		for(std::size_t i{0}; i<game_.entities_.size(); ++i)
+		{
+			const auto& current_entity = game_.entities_[i].entity;
+			Rectangle entity_collision_box
+			{
+				.x=game_.entities_[i].position.x,
+				.y=game_.entities_[i].position.y,
+				.width=current_entity->render_size().x,
+				.height=current_entity->render_size().y
+			};
+			if(CheckCollisionRecs(collision_box, entity_collision_box))
+				colliding_entites_ids.push_back(i);
+		}
+		return colliding_entites_ids;
 	}
 
 	private:

@@ -15,7 +15,7 @@ void Sprite::render(int animation_number, Vector2 position) const
 {
 	const int image_number = frame_number_+animation_number*frames_per_animation_;
 	const Rectangle frame(image_number*frame_width_, (image_number/frames_per_row_)*frame_height_, frame_width_, frame_height_);
-	DrawTexturePro(texture_, frame, Rectangle(position.x-frame_width_, position.y-frame_height_, frame_width_*3, frame_height_*3), {0, 0}, 0, WHITE);
+	DrawTexturePro(texture_, frame, Rectangle(position.x, position.y, frame_width_, frame_height_), {0, 0}, 0, WHITE);
 	auto end_time = std::chrono::steady_clock::now();
 }
 

@@ -5,16 +5,40 @@
 #include "rl/maths.hpp"
 #include "rl/operator_overloads.hpp"
 
-void Game::update(std::chrono::nanoseconds del_time)
+void Game::update_camera(std::chrono::nanoseconds del_time)
 {
 	constexpr std::chrono::nanoseconds second = std::chrono::seconds{1};
 	const auto seconds_passed = static_cast<float>(del_time.count())/second.count();
+
+	camera_position_ += camera_velocity_;
+	const auto camera_displacement = player_position()-camera_position_;
+	camera_velocity_ = camera_velocity_*camera_velocity_dampening_multiplier_+(seconds_passed*camera_velocity_multiplier_)*camera_displacement;
 	
-	camera_position += camera_velocity;
-	const auto camera_displacement = player_position()-camera_position;
-	camera_velocity = camera_velocity*0.7+(seconds_passed/2)*camera_displacement;
+	double scaled_screen_width = GetScreenWidth()/zoom_;
+	double scaled_screen_height = GetScreenHeight()/zoom_;
+	Vector2 max_distance_of_player_from_camera = Vector2(scaled_screen_width/2, scaled_screen_height/2)*camera_fraction_of_resolution_bound_;
+	if(std::abs(player_position().x-camera_position_.x) > max_distance_of_player_from_camera.x)
+		camera_position_.x = player_position().x + max_distance_of_player_from_camera.x*(player_position().x>camera_position_.x? -1 : 1);
+	if(std::abs(player_position().y-camera_position_.y) > max_distance_of_player_from_camera.y)
+		camera_position_.y = player_position().y + max_distance_of_player_from_camera.y*(player_position().y>camera_position_.y? -1 : 1);
+
+	// ensure camera can not move outside of the map.
+	if(camera_position_.x < scaled_screen_width/2) camera_position_.x = scaled_screen_width/2;
+	if(camera_position_.y < scaled_screen_height/2) camera_position_.y = scaled_screen_height/2;
+	int map_size_x = current_tile_set_.tile_size()*current_map_.size().x;
+	int map_size_y = current_tile_set_.tile_size()*current_map_.size().y;
+	if(camera_position_.x > map_size_x-scaled_screen_width/2)
+		camera_position_.x = map_size_x-scaled_screen_width/2;
+	if(camera_position_.y > map_size_y-scaled_screen_height/2)
+		camera_position_.y = map_size_y-scaled_screen_height/2;
+}
+
+void Game::update(std::chrono::nanoseconds del_time)
+{
+	update_camera(del_time);
+	
 	for(auto& positioned_entity : entities_)
-	{	
+	{
 		auto del_position = positioned_entity.entity->update(del_time, *this, positioned_entity.position);
 		Vector2 new_unvalidated_position = positioned_entity.position+del_position;
 		if(sprite_can_move_to_without_collision(new_unvalidated_position, positioned_entity.entity->render_size(), positioned_entity.position))
@@ -38,15 +62,39 @@ Game::Game()
 	entities_.emplace_back(std::make_unique<Enemy>(), Vector2{100, 100});
 }
 
+Game::~Game()
+{
+	UnloadRenderTexture(render_texture_);
+}
+
 void Game::render()
 {
 	ClearBackground(WHITE);
-	auto offset = Vector2(GetScreenWidth(), GetScreenHeight())/2-camera_position;
+	auto offset = Vector2(GetScreenWidth()/zoom_, GetScreenHeight()/zoom_)/2-camera_position_;
 	current_map_.render(current_tile_set_, offset);
 	for(const auto& positioned_entity : entities_)
 	{
 		positioned_entity.entity->render(positioned_entity.position+offset);
 	}
+
+}
+
+void Game::display()
+{
+	BeginTextureMode(render_texture_);
+
+		render();
+
+	EndTextureMode();
+	
+	BeginDrawing();
+
+		const auto source_rectangle = Rectangle(0, 0, render_texture_.texture.width,-render_texture_.texture.height);
+		const auto destination_rectangle = Rectangle(0, 0, render_texture_.texture.width*zoom_, render_texture_.texture.height*zoom_);
+		DrawTexturePro(render_texture_.texture, source_rectangle, destination_rectangle, Vector2(0,0), 0, WHITE);
+
+	EndDrawing();
+	
 }
 
 bool Game::sprite_can_move_to_without_collision(const Vector2& destination, const Vector2& sprite_size, const Vector2& starting_position)
