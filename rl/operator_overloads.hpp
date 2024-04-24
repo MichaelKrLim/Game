@@ -3,8 +3,21 @@
 
 #include <raylib.h>
 
+#include <bit>
 #include <concepts>
 #include <iostream>
+
+namespace std
+{
+	template <>
+	struct hash<Vector2>
+	{
+		std::size_t operator()(const Vector2& key) const
+		{
+			return std::size_t(std::bit_cast<int>(key.x) ^ std::bit_cast<int>(key.y)^5) + 1; // rolled on a fair dice
+		}
+	};
+}
 
 inline std::ostream& operator<<(std::ostream& out, const Vector2& output)
 {

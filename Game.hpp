@@ -9,6 +9,8 @@
 #include <raylib.h>
 
 #include <memory>
+#include <unordered_map>
+#include <unordered_set>
 
 class Game_view;
 
@@ -38,7 +40,6 @@ class Game
 		Vector2 position;
 	};
 
-
 	RenderTexture render_texture_ = LoadRenderTexture(GetRenderWidth()*2, GetRenderHeight()*2);
 	double camera_fraction_of_resolution_bound_ = 3.0/4.0;
 	double camera_velocity_dampening_multiplier_ = 0.7;
@@ -48,7 +49,12 @@ class Game
 	std::vector<Positioned_entity> entities_{};
 	Vector2 camera_position_{0, 0};
 	Vector2 camera_velocity_{0, 0};
+	const int cell_size_ = 64;
+	std::unordered_map<Vector2, std::vector<std::size_t>> entity_buckets_;
 
+	void insert_into_entity_bucket(std::size_t entity_id);
+	std::unordered_set<Vector2> get_entity_cell_ids(std::size_t entity_id) const;
+	void add_point_to_cell_ids(Vector2 position, std::unordered_set<Vector2> &cell_ids) const;
 	bool position_is_free(const Vector2& position, const Vector2& sprite_size) const;
 	Vector2 player_position() const
 	{

@@ -5,6 +5,8 @@
 #include "rl/maths.hpp"
 #include "rl/operator_overloads.hpp"
 
+#include <unordered_set>
+
 void Game::update_camera(std::chrono::nanoseconds del_time)
 {
 	constexpr std::chrono::nanoseconds second = std::chrono::seconds{1};
@@ -33,10 +35,44 @@ void Game::update_camera(std::chrono::nanoseconds del_time)
 		camera_position_.y = map_size_y-scaled_screen_height/2;
 }
 
+void Game::add_point_to_cell_ids(Vector2 position, std::unordered_set<Vector2> &cell_ids) const
+{
+	Vector2 cell_id = Vector2(std::floor(position.x / cell_size_), std::floor(position.y / cell_size_));
+	cell_ids.insert(cell_id);
+}
+
+std::unordered_set<Vector2> Game::get_entity_cell_ids(std::size_t entity_id) const
+{
+	std::unordered_set<Vector2> cell_ids{};
+	const auto& current_entity = entities_[entity_id];
+	const auto& render_size = current_entity.entity->render_size();
+	add_point_to_cell_ids(current_entity.position, cell_ids); // top left
+	add_point_to_cell_ids({current_entity.position.x+render_size.x, current_entity.position.y}, cell_ids); // top right
+	add_point_to_cell_ids({current_entity.position.x, current_entity.position.y+render_size.y}, cell_ids); // bottom left
+	add_point_to_cell_ids({current_entity.position.x+render_size.x, current_entity.position.y+render_size.y}, cell_ids); // bottom right
+	
+	return cell_ids;
+}
+
+void Game::insert_into_entity_bucket(std::size_t entity_id)
+{
+	const auto cell_ids = get_entity_cell_ids(entity_id);
+	for(const auto &cell_id : cell_ids)
+	{
+		entity_buckets_[cell_id].push_back(entity_id);
+	}
+}
+
 void Game::update(std::chrono::nanoseconds del_time)
 {
+	entity_buckets_.clear();
 	update_camera(del_time);
 	
+	for(int i{}; i<entities_.size(); ++i)
+	{
+		insert_into_entity_bucket(i);
+	}
+
 	for(auto& positioned_entity : entities_)
 	{
 		auto del_position = positioned_entity.entity->update(del_time, *this, positioned_entity.position);
