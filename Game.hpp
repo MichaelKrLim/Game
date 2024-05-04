@@ -3,8 +3,10 @@
 
 #include "Entity.hpp"
 #include "Map.hpp"
-#include "rl/operator_overloads.hpp"
+#include "Resource_buffer.hpp"
 #include "Tile_set.hpp"
+
+#include "rl/operator_overloads.hpp"
 
 #include <raylib.h>
 
@@ -46,15 +48,17 @@ class Game
 	double camera_velocity_multiplier_ = 0.5;	
 	double zoom_{1};
 	const int player_index_ = 0;
+	Resource_buffer resource_buffer_;
 	std::vector<Positioned_entity> entities_{};
 	Vector2 camera_position_{0, 0};
 	Vector2 camera_velocity_{0, 0};
-	const int cell_size_ = 64;
+	const int bucket_size_ = 64;
 	std::unordered_map<Vector2, std::vector<std::size_t>> entity_buckets_;
 
 	void insert_into_entity_bucket(std::size_t entity_id);
-	std::unordered_set<Vector2> get_entity_cell_ids(std::size_t entity_id) const;
-	void add_point_to_cell_ids(Vector2 position, std::unordered_set<Vector2> &cell_ids) const;
+	std::unordered_set<Vector2> get_entity_bucket_ids(std::size_t entity_id) const;
+	std::unordered_set<Vector2> get_bucket_ids(Rectangle rectangle) const;
+	Vector2 position_to_bucket_id(Vector2 position) const;
 	bool position_is_free(const Vector2& position, const Vector2& sprite_size) const;
 	Vector2 player_position() const
 	{
@@ -87,24 +91,48 @@ class Game_view
 	{
 		return game_.position_is_free(position, sprite_size);
 	}
-	std::vector<std::size_t> collisions_with(Rectangle collision_box)
+/*	std::unordered_set<std::size_t> collisions_with(Rectangle collision_rectangle)
 	{
-		std::vector<std::size_t> colliding_entites_ids;
-		for(std::size_t i{0}; i<game_.entities_.size(); ++i)
+		std::unordered_set<std::size_t> colliding_entites_ids;
+		for(const auto& bucket_id : game_.get_bucket_ids(collision_rectangle))
 		{
-			const auto& current_entity = game_.entities_[i].entity;
-			Rectangle entity_collision_box
+			for(const auto& entity_id : game_.entity_buckets_[bucket_id])
 			{
-				.x=game_.entities_[i].position.x,
-				.y=game_.entities_[i].position.y,
-				.width=current_entity->render_size().x,
-				.height=current_entity->render_size().y
-			};
-			if(CheckCollisionRecs(collision_box, entity_collision_box))
-				colliding_entites_ids.push_back(i);
+				const auto& current_entity = game_.entities_[entity_id].entity;
+				Rectangle entity_collision_box
+				{
+					.x=game_.entities_[entity_id].position.x,
+					.y=game_.entities_[entity_id].position.y,
+					.width=current_entity->render_size().x,
+					.height=current_entity->render_size().y
+				};
+				if(CheckCollisionRecs(collision_rectangle, entity_collision_box))
+					colliding_entites_ids.insert(entity_id);
+			}
+		}
+		return colliding_entites_ids;
+	}*/
+
+std::unordered_set<std::size_t> collisions_with(Rectangle collision_rectangle)
+	{
+		std::unordered_set<std::size_t> colliding_entites_ids;
+			for(std::size_t entity_id{}; entity_id<game_.entities_.size(); ++entity_id)
+			{
+				const auto& current_entity = game_.entities_[entity_id].entity;
+				Rectangle entity_collision_box
+				{
+					.x=game_.entities_[entity_id].position.x,
+					.y=game_.entities_[entity_id].position.y,
+					.width=current_entity->render_size().x,
+					.height=current_entity->render_size().y
+				};
+				if(CheckCollisionRecs(collision_rectangle, entity_collision_box))
+					colliding_entites_ids.insert(entity_id);
+
 		}
 		return colliding_entites_ids;
 	}
+	
 
 	private:
 

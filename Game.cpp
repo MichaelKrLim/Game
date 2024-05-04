@@ -35,31 +35,44 @@ void Game::update_camera(std::chrono::nanoseconds del_time)
 		camera_position_.y = map_size_y-scaled_screen_height/2;
 }
 
-void Game::add_point_to_cell_ids(Vector2 position, std::unordered_set<Vector2> &cell_ids) const
+Vector2 Game::position_to_bucket_id(Vector2 position) const
 {
-	Vector2 cell_id = Vector2(std::floor(position.x / cell_size_), std::floor(position.y / cell_size_));
-	cell_ids.insert(cell_id);
+	return Vector2(std::floor(position.x / bucket_size_), std::floor(position.y / bucket_size_));
 }
 
-std::unordered_set<Vector2> Game::get_entity_cell_ids(std::size_t entity_id) const
+std::unordered_set<Vector2> Game::get_bucket_ids(Rectangle rectangle) const
 {
-	std::unordered_set<Vector2> cell_ids{};
+	std::unordered_set<Vector2> bucket_ids{};
+
+	const auto top_left_bucket_id = position_to_bucket_id(Vector2(rectangle.x,rectangle.y));
+	const auto bottom_right_bucket_id = position_to_bucket_id({rectangle.x+rectangle.width, rectangle.y+rectangle.height});
+	for(int y = top_left_bucket_id.y; y <= bottom_right_bucket_id.y; ++y)
+		for(int x = top_left_bucket_id.x; x <= bottom_right_bucket_id.x; ++x)
+			bucket_ids.insert(Vector2(x,y));
+
+	return bucket_ids;
+}
+
+std::unordered_set<Vector2> Game::get_entity_bucket_ids(std::size_t entity_id) const
+{
 	const auto& current_entity = entities_[entity_id];
 	const auto& render_size = current_entity.entity->render_size();
-	add_point_to_cell_ids(current_entity.position, cell_ids); // top left
-	add_point_to_cell_ids({current_entity.position.x+render_size.x, current_entity.position.y}, cell_ids); // top right
-	add_point_to_cell_ids({current_entity.position.x, current_entity.position.y+render_size.y}, cell_ids); // bottom left
-	add_point_to_cell_ids({current_entity.position.x+render_size.x, current_entity.position.y+render_size.y}, cell_ids); // bottom right
-	
-	return cell_ids;
+	const Rectangle bounding_rectangle
+	{
+		.x=current_entity.position.x,
+		.y=current_entity.position.y,
+		.width=render_size.y,
+		.height=render_size.x
+	};
+	return get_bucket_ids(bounding_rectangle);
 }
 
 void Game::insert_into_entity_bucket(std::size_t entity_id)
 {
-	const auto cell_ids = get_entity_cell_ids(entity_id);
-	for(const auto &cell_id : cell_ids)
+	const auto bucket_ids = get_entity_bucket_ids(entity_id);
+	for(const auto &bucket_id : bucket_ids)
 	{
-		entity_buckets_[cell_id].push_back(entity_id);
+		entity_buckets_[bucket_id].push_back(entity_id);
 	}
 }
 
@@ -94,8 +107,10 @@ bool Game::position_is_free(const Vector2& position, const Vector2& sprite_size)
 
 Game::Game()
 {
-	entities_.emplace_back(std::make_unique<Player>(), Vector2{80, 80});
-	entities_.emplace_back(std::make_unique<Enemy>(), Vector2{100, 100});
+	entities_.emplace_back(std::make_unique<Player>(resource_buffer_), Vector2{80, 80});
+	for(int y{}; y<10; ++y)
+	for(int i{}; i<1000; ++i)
+		entities_.emplace_back(std::make_unique<Enemy>(resource_buffer_), Vector2(100+i*5, 100+y*10));
 }
 
 Game::~Game()
@@ -112,6 +127,7 @@ void Game::render()
 	{
 		positioned_entity.entity->render(positioned_entity.position+offset);
 	}
+	DrawFPS(0, 0);
 
 }
 

@@ -2,6 +2,7 @@
 #define Enemy_hpp_INCLUDED
 
 #include "Entity.hpp"
+#include "Resource_buffer.hpp"
 #include "Sprite.hpp"
 
 #include <raylib.h>
@@ -13,10 +14,10 @@ class Enemy : public Entity
 {
 	public:
 
-	Enemy() : 
-		sprite_(3, 4, 3, "assets/Enemy_sprite_sheet/enemy_one.png")
+	explicit Enemy(const Resource_buffer& resource_buffer) : 
+		sprite_(3, 4, 3, "assets/Enemy_sprite_sheet/enemy_one.png", resource_buffer)
 	{
-
+		
 	}
 
 	Vector2 update(std::chrono::nanoseconds del_time, Game_view game, const Vector2& position) override;

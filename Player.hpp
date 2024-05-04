@@ -2,6 +2,7 @@
 #define Player_hpp_INCLUDED
 
 #include "Entity.hpp"
+#include "Resource_buffer.hpp"
 #include "Sprite.hpp"
 
 #include <raylib.h>
@@ -12,8 +13,8 @@ class Player : public Entity
 {
 	public:
 
-	Player() : 
-		sprite_(8, 2, 4, "assets/player.png")
+	explicit Player(const Resource_buffer& resource_buffer) : 
+		sprite_(8, 2, 4, "assets/player.png", resource_buffer)
 	{
 
 	}

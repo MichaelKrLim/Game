@@ -106,7 +106,7 @@ std::optional<Vector2> Enemy::select_target_tile(Vector2 enemy_position, Vector2
 Vector2 Enemy::update(std::chrono::nanoseconds del_time, Game_view game, const Vector2& position)
 {
 	const int tile_size = game.tile_size_in_pixels();	
-	if(distance(position + Vector2(0, tile_size), game.player_position()) < tile_size)
+	//if(distance(position + Vector2(0, tile_size), game.player_position()) < tile_size)
 		return {0, 0};
 	const Vector2 map_tile_size = game.map_size_in_tiles();
 	const auto player_tile_position = Vector2(std::floor(game.player_position().x/tile_size), std::floor(game.player_position().y/tile_size));

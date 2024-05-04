@@ -23,7 +23,7 @@
 int main()
 {
 	using namespace std::chrono_literals;
-	
+
 	InitWindow(0, 0, "Game");
 	SetTargetFPS(240);
 
