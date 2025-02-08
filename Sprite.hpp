@@ -33,16 +33,15 @@ class Sprite
 
 	private:
 
-	std::shared_ptr<rl::Texture> texture_;
+	std::weak_ptr<rl::Texture> texture_;
 	std::chrono::nanoseconds nanoseconds_per_frame_{std::chrono::milliseconds{100}};
 	const int frames_per_row_;
 	const int num_rows_;
 	const int frames_per_animation_;
-	const int frame_width_ = texture_->width()/frames_per_row_;
-	const int frame_height_ = texture_->height()/num_rows_;
+	const int frame_width_ = texture_.lock()->width()/frames_per_row_;
+	const int frame_height_ = texture_.lock()->height()/num_rows_;
 
 	int frame_number_{0};
 	std::chrono::nanoseconds del_time_elapsed_{0}; 
 };
 #endif // Sprite_hpp_INCLUDED
-

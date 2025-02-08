@@ -91,7 +91,7 @@ class Game_view
 	{
 		return game_.position_is_free(position, sprite_size);
 	}
-/*	std::unordered_set<std::size_t> collisions_with(Rectangle collision_rectangle)
+	std::unordered_set<std::size_t> collisions_with(Rectangle collision_rectangle)
 	{
 		std::unordered_set<std::size_t> colliding_entites_ids;
 		for(const auto& bucket_id : game_.get_bucket_ids(collision_rectangle))
@@ -106,13 +106,17 @@ class Game_view
 					.width=current_entity->render_size().x,
 					.height=current_entity->render_size().y
 				};
+				BeginDrawing();
+				DrawRectangleLines(collision_rectangle.x, collision_rectangle.y, collision_rectangle.width, collision_rectangle.height, BLACK);
+				DrawRectangleLines(entity_collision_box.x, entity_collision_box.y, entity_collision_box.width, entity_collision_box.height, RED);
+				EndDrawing();
 				if(CheckCollisionRecs(collision_rectangle, entity_collision_box))
 					colliding_entites_ids.insert(entity_id);
 			}
 		}
 		return colliding_entites_ids;
-	}*/
-
+	}
+/*
 std::unordered_set<std::size_t> collisions_with(Rectangle collision_rectangle)
 	{
 		std::unordered_set<std::size_t> colliding_entites_ids;
@@ -126,12 +130,16 @@ std::unordered_set<std::size_t> collisions_with(Rectangle collision_rectangle)
 					.width=current_entity->render_size().x,
 					.height=current_entity->render_size().y
 				};
+				BeginDrawing()
+				DrawRectangleLines(collision_rectangle.x, collision_rectangle.y, collision_rectangle.width, collision_rectangle.height, BLACK);
+				DrawRectangleLines(entity_collision_box.x, entity_collision_box.y, entity_collision_box.width, entity_collision_box.height, RED);
+				EndDrawing()
 				if(CheckCollisionRecs(collision_rectangle, entity_collision_box))
 					colliding_entites_ids.insert(entity_id);
 
 		}
 		return colliding_entites_ids;
-	}
+	}*/
 	
 
 	private:

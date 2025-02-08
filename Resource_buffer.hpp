@@ -12,13 +12,13 @@
 class Resource_buffer
 {
 	public:
-	std::shared_ptr<rl::Texture> get_texture(std::filesystem::path path) const
+	std::weak_ptr<rl::Texture> get_texture(std::filesystem::path path) const
 	{
 		if(!texture_buffer_.contains(path))
 		{
 			texture_buffer_[path] = std::make_shared<rl::Texture>(path);
 		}
-		return texture_buffer_[path];
+		return std::weak_ptr<rl::Texture>(texture_buffer_[path]);
 	}
 
 	private:
